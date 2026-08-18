@@ -1,0 +1,109 @@
+{
+  "metadata": {
+    "enterprise": "Elsamag IT Solutions",
+    "lead_consultant": "Samuel Chinwendu Agu",
+    "engine": "CheckoutTelemetryMonitor",
+    "repository": "pm-ecom-checkout-agile-migration-engine",
+    "file": "benchmarks/latency_canary_audit.log",
+    "environment": "production-cutover",
+    "timestamp_utc": "2026-08-18T06:18:36.000000Z",
+    "audit_status": "100% OPERATIONAL (PRODUCTION READY)",
+    "cutover_authorization": "AUTHORIZED FOR 100% TRAFFIC"
+  },
+  "payment_gateways": [
+    {
+      "gateway_name": "Stripe API v3",
+      "endpoint": "https://api.stripe.com/v1/payment_intents",
+      "sample_count": 85000,
+      "p50_latency_ms": 62.4,
+      "p95_latency_ms": 118.2,
+      "p99_latency_ms": 142.5,
+      "error_rate_pct": 0.012,
+      "cart_abandonment_rate_pct": 1.84,
+      "status": "HEALTHY"
+    },
+    {
+      "gateway_name": "Apple Pay V3 Token",
+      "endpoint": "https://apple-pay-gateway.internal.elsamag.io/v3/tokenize",
+      "sample_count": 62000,
+      "p50_latency_ms": 48.1,
+      "p95_latency_ms": 92.6,
+      "p99_latency_ms": 125.0,
+      "error_rate_pct": 0.005,
+      "cart_abandonment_rate_pct": 1.10,
+      "status": "HEALTHY"
+    },
+    {
+      "gateway_name": "PayPal Commerce",
+      "endpoint": "https://api.paypal.com/v2/checkout/orders",
+      "sample_count": 41000,
+      "p50_latency_ms": 78.3,
+      "p95_latency_ms": 135.0,
+      "p99_latency_ms": 164.2,
+      "error_rate_pct": 0.021,
+      "cart_abandonment_rate_pct": 2.15,
+      "status": "HEALTHY"
+    },
+    {
+      "gateway_name": "Klarna Installments",
+      "endpoint": "https://api.klarna.com/payments/v1/authorizations",
+      "sample_count": 29000,
+      "p50_latency_ms": 84.5,
+      "p95_latency_ms": 142.1,
+      "p99_latency_ms": 172.8,
+      "error_rate_pct": 0.028,
+      "cart_abandonment_rate_pct": 2.30,
+      "status": "HEALTHY"
+    }
+  ],
+  "canary_evaluations": [
+    {
+      "stage_id": "STAGE-01 (Canary)",
+      "traffic_pct": 5.0,
+      "total_transactions": 12500,
+      "http_5xx_rate_pct": 0.008,
+      "p99_latency_ms": 138.4,
+      "cart_abandonment_spike_pct": 0.12,
+      "sla_breached": false,
+      "circuit_breaker_tripped": false,
+      "verdict": "STAGE_PASSED_PROCEED",
+      "diagnostic_messages": []
+    },
+    {
+      "stage_id": "STAGE-02 (Canary)",
+      "traffic_pct": 25.0,
+      "total_transactions": 62000,
+      "http_5xx_rate_pct": 0.015,
+      "p99_latency_ms": 144.1,
+      "cart_abandonment_spike_pct": 0.18,
+      "sla_breached": false,
+      "circuit_breaker_tripped": false,
+      "verdict": "STAGE_PASSED_PROCEED",
+      "diagnostic_messages": []
+    },
+    {
+      "stage_id": "STAGE-03 (Canary)",
+      "traffic_pct": 50.0,
+      "total_transactions": 124000,
+      "http_5xx_rate_pct": 0.021,
+      "p99_latency_ms": 148.6,
+      "cart_abandonment_spike_pct": 0.25,
+      "sla_breached": false,
+      "circuit_breaker_tripped": false,
+      "verdict": "STAGE_PASSED_PROCEED",
+      "diagnostic_messages": []
+    },
+    {
+      "stage_id": "STAGE-04 (Cutover)",
+      "traffic_pct": 100.0,
+      "total_transactions": 250000,
+      "http_5xx_rate_pct": 0.024,
+      "p99_latency_ms": 151.2,
+      "cart_abandonment_spike_pct": 0.30,
+      "sla_breached": false,
+      "circuit_breaker_tripped": false,
+      "verdict": "STAGE_PASSED_PROCEED",
+      "diagnostic_messages": []
+    }
+  ]
+}
