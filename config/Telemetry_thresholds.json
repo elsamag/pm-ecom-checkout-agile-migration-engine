@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "metadata": {
+    "enterprise": "Elsamag IT Solutions",
+    "lead_consultant": "Samuel Chinwendu Agu",
+    "repository": "pm-ecom-checkout-agile-migration-engine",
+    "file": "config/telemetry_thresholds.json",
+    "version": "2.4.0",
+    "environment": "production-cutover",
+    "last_updated": "2026-08-18T07:12:00Z"
+  },
+  "telemetry_thresholds": {
+    "latency_slas_ms": {
+      "p50_target_ms": 65.0,
+      "p95_warning_ms": 120.0,
+      "p99_critical_threshold_ms": 180.0,
+      "hard_timeout_ceiling_ms": 250.0,
+      "database_lock_wait_timeout_ms": 100.0,
+      "fraud_scoring_overhead_max_ms": 25.0
+    },
+    "error_rate_thresholds_pct": {
+      "http_5xx_critical_threshold_pct": 0.05,
+      "http_4xx_warning_threshold_pct": 1.20,
+      "payment_gateway_declines_anomaly_pct": 3.50,
+      "cart_abandonment_spike_threshold_pct": 2.50,
+      "idempotency_key_collision_tolerance_pct": 0.00
+    },
+    "canary_telemetry_governance": {
+      "evaluation_window_seconds": 300,
+      "min_sample_size_per_stage": 1000,
+      "stages": [
+        {
+          "stage_id": "STAGE-01",
+          "traffic_allocation_pct": 5.0,
+          "bake_time_hours": 6,
+          "max_allowable_error_pct": 0.02,
+          "max_p99_latency_ms": 175.0
+        },
+        {
+          "stage_id": "STAGE-02",
+          "traffic_allocation_pct": 25.0,
+          "bake_time_hours": 12,
+          "max_allowable_error_pct": 0.03,
+          "max_p99_latency_ms": 180.0
+        },
+        {
+          "stage_id": "STAGE-03",
+          "traffic_allocation_pct": 50.0,
+          "bake_time_hours": 12,
+          "max_allowable_error_pct": 0.04,
+          "max_p99_latency_ms": 180.0
+        },
+        {
+          "stage_id": "STAGE-04",
+          "traffic_allocation_pct": 100.0,
+          "bake_time_hours": 24,
+          "max_allowable_error_pct": 0.05,
+          "max_p99_latency_ms": 180.0
+        }
+      ]
+    },
+    "payment_gateway_endpoints": {
+      "stripe_v3": {
+        "endpoint": "https://api.stripe.com/v1/payment_intents",
+        "p99_sla_ms": 160.0,
+        "circuit_breaker_error_pct": 0.05,
+        "retry_backoff_base_ms": 50
+      },
+      "apple_pay_v3": {
+        "endpoint": "https://apple-pay-gateway.internal.elsamag.io/v3/tokenize",
+        "p99_sla_ms": 145.0,
+        "circuit_breaker_error_pct": 0.02,
+        "retry_backoff_base_ms": 30
+      },
+      "paypal_commerce": {
+        "endpoint": "https://api.paypal.com/v2/checkout/orders",
+        "p99_sla_ms": 180.0,
+        "circuit_breaker_error_pct": 0.08,
+        "retry_backoff_base_ms": 75
+      },
+      "klarna_installments": {
+        "endpoint": "https://api.klarna.com/payments/v1/authorizations",
+        "p99_sla_ms": 190.0,
+        "circuit_breaker_error_pct": 0.10,
+        "retry_backoff_base_ms": 100
+      }
+    },
+    "circuit_breaker_and_rollback": {
+      "policy": "AUTOMATIC_FAILOVER_TO_LEGACY",
+      "drain_existing_sessions": true,
+      "max_rollback_latency_ms": 500.0,
+      "triggers": [
+        "HTTP_5XX_EXCEEDED",
+        "CART_ABANDONMENT_ANOMALY",
+        "GATEWAY_TIMEOUT_CHAIN",
+        "FRAUD_SCORE_PIPELINE_UNAVAILABLE"
+      ]
+    },
+    "apm_and_alerting": {
+      "metrics_collector": "Prometheus & Datadog APM",
+      "scrape_interval_seconds": 5,
+      "pagerduty_escalation": {
+        "sev1_auto_trigger": true,
+        "sev1_criteria": "Error rate > 0.05% OR P99 > 250ms for >= 2 min",
+        "sev2_criteria": "P99 > 180ms for >= 5 min OR Abandonment spike > 2.5%",
+        "incident_channel": "slack-alert-ecom-checkout-war-room"
+      }
+    }
+  }
+}
